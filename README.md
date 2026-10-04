@@ -1,1 +1,1 @@
-#some type error fixed 
+this is an assignment of MLOps covering pipeline and dvc
