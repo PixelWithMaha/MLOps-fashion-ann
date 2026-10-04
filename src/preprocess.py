@@ -26,7 +26,7 @@ def preprocess():
         random_state=seed,
         stratify=y_train_raw
     )
-    
+
     os.makedirs("data/processed", exist_ok=True)
     np.savez_compressed(
         "data/processed/train.npz",

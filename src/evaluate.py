@@ -3,10 +3,16 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
+import yaml
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
 
 def evaluate():
+    with open("params.yaml", "r") as f:
+        params = yaml.safe_load(f)
+
+    metrics_file = params["evaluate"]["metrics_file"]
+
     model = tf.keras.models.load_model("models/model.h5")
 
     test_data = np.load("data/processed/test.npz")
@@ -19,15 +25,17 @@ def evaluate():
         "test_loss": float(test_loss),
         "test_accuracy": float(test_acc)
     }
-    with open("metrics.json", "w") as f:
+
+    with open(metrics_file, "w") as f:
         json.dump(metrics, f, indent=4)
-    print("Metrics written to metrics.json")
+    print(f"Metrics written to {metrics_file}")
 
     y_pred_probs = model.predict(x_test, verbose=0)
     y_pred = np.argmax(y_pred_probs, axis=1)
 
     class_names = [
-        "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat", "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
+        "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
+        "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
     ]
 
     cm = confusion_matrix(y_test, y_pred)
@@ -41,6 +49,7 @@ def evaluate():
     plt.savefig("reports/confusion_matrix.png", dpi=300)
     plt.close()
     print("Confusion matrix saved to reports/confusion_matrix.png")
+
 
 if __name__ == "__main__":
     evaluate()
