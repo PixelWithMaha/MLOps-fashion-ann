@@ -1,0 +1,97 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: src/prepare.py
+      hash: md5
+      md5: 54cd8d30f7ca983b4c348d655e0fce1a
+      size: 442
+    outs:
+    - path: data/raw/test_raw.npz
+      hash: md5
+      md5: 73827568bd5760e2f2abbb41068a2618
+      size: 4425388
+    - path: data/raw/train_raw.npz
+      hash: md5
+      md5: 7466c1487f3acca1c922c0b638fe6995
+      size: 26444515
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - path: data/raw/test_raw.npz
+      hash: md5
+      md5: 73827568bd5760e2f2abbb41068a2618
+      size: 4425388
+    - path: data/raw/train_raw.npz
+      hash: md5
+      md5: 7466c1487f3acca1c922c0b638fe6995
+      size: 26444515
+    - path: src/preprocess.py
+      hash: md5
+      md5: 74cc587cd20f48817e5f76b275c30046
+      size: 1488
+    params:
+      params.yaml:
+        preprocess.seed: 42
+        preprocess.test_size: 0.1
+    outs:
+    - path: data/processed/test.npz
+      hash: md5
+      md5: 7a1f1d3e6b81d45481bf6d62cda11b71
+      size: 7278713
+    - path: data/processed/train.npz
+      hash: md5
+      md5: 54dba97326f17b094d28ea23ebcf44ff
+      size: 39151398
+    - path: data/processed/val.npz
+      hash: md5
+      md5: cdd098577b59b393faebfacbbf476c63
+      size: 4352901
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/processed/train.npz
+      hash: md5
+      md5: 54dba97326f17b094d28ea23ebcf44ff
+      size: 39151398
+    - path: data/processed/val.npz
+      hash: md5
+      md5: cdd098577b59b393faebfacbbf476c63
+      size: 4352901
+    - path: src/train.py
+      hash: md5
+      md5: 6f91be330b964b38d45f6a55c0cfaed0
+      size: 1407
+    params:
+      params.yaml:
+        train.batch_size: 64
+        train.dense_units: 256
+        train.dropout_rate: 0.2
+        train.epochs: 10
+        train.learning_rate: 0.001
+    outs:
+    - path: models/model.h5
+      hash: md5
+      md5: 5aad5f6ef99f185931a070c8632c9e7c
+      size: 2466904
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/processed/test.npz
+      hash: md5
+      md5: 7a1f1d3e6b81d45481bf6d62cda11b71
+      size: 7278713
+    - path: models/model.h5
+      hash: md5
+      md5: 5aad5f6ef99f185931a070c8632c9e7c
+      size: 2466904
+    - path: src/evaluate.py
+      hash: md5
+      md5: 1b65545310f8474905689bc7075d0b43
+      size: 1631
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: e38fc5587d7180a384bd6653faa89adc
+      size: 81
