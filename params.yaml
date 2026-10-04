@@ -1,0 +1,14 @@
+prepare:
+  seed: 42
+
+preprocess:
+  test_size: 0.1 
+  seed: 42
+
+train:
+  epochs: 10
+  batch_size: 64
+  learning_rate: 0.001
+  hidden_units_1: 128
+  hidden_units_2: 64
+  dropout_rate: 0.2
